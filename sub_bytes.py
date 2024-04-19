@@ -1,48 +1,4 @@
-import polynom
-
-
-class Polynom(polynom.Polynom):
-    def __add__(self, other):
-        new = Polynom()
-        for index, value in enumerate(other):
-            new[index] = value ^ self[index]
-        return new
-
-    def __sub__(self, other):
-        return self + other
-
-    def __mul__(self, other):
-        assert isinstance(other, Polynom)
-        new = Polynom()
-        for index, value in enumerate(self.values):
-            if value:
-                for index2, value2 in enumerate(other.values):
-                    if value2:
-                        new[index + index2] ^= 1
-        return new
-
-    def __mod__(self, mod):
-        assert isinstance(mod, Polynom)
-        quotient = self.most_significant_one() - mod.most_significant_one()
-        multi = Polynom()
-        if quotient < 0: return self
-        multi[quotient] = 1
-        new = self - (mod * multi)
-        while new.most_significant_one() > mod.most_significant_one() - 1:
-            quotient = new.most_significant_one() - mod.most_significant_one()
-            multi = Polynom()
-            multi[quotient] = 1
-            new = new - (mod * multi)
-        return new
-
-    def __pow__(self, power, modulo=None):
-        if power == 0:
-            return Polynom(b'\x01')
-        if power == 1:
-            return self
-        if power % 2 == 0:
-            return pow(self * self % modulo or Polynom(b'\x01'), power // 2, modulo) % modulo or Polynom(b'\x01')
-        return self * pow(self, power - 1, modulo)
+from polynom import Polynom
 
 
 def multiplicative_inverse(a: bytes) -> bytes:
