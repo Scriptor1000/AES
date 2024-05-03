@@ -1,10 +1,6 @@
+from helpers import _xor_bytes
 from polynom import Polynom
 from state import State
-
-
-def _xor_bytes(a: bytes, b: bytes) -> bytes:
-    assert len(a) == len(b)
-    return bytes(x ^ y for x, y in zip(a, b))
 
 
 def _multiply_with_polynom(byte: bytes, polynom: Polynom) -> bytes:
