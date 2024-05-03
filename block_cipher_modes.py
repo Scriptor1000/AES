@@ -13,7 +13,7 @@ def xor_bytes(a: bytes, b: bytes) -> bytes:
 
 def add_padding(plaintext: bytes, block_size: int) -> bytes:
     padding_size = block_size - len(plaintext) % block_size
-    return plaintext + bytes([255] * padding_size)
+    return plaintext + bytes([255] + [0] * (padding_size - 1))
 
 
 def cipher_block_chaining_encrypt(plaintext: bytes, key: bytes, iv: bytes) -> bytes:
@@ -92,18 +92,6 @@ def counter_decrypt(ciphertext: bytes, key: bytes, nonce: bytes) -> bytes:
     return _counter(ciphertext, key, nonce)
 
 
-def galois_counter_encrypt(plaintext: bytes, key: bytes, nonce: bytes) -> bytes:
-    assert len(key) == 32
-    assert len(nonce) == 12  # nonce length != 128 Bits IV length
-    iv = nonce + bytes(4)
-    ciphertext = b''
-    auth_data = b'012345679abcdef'
-    for i in range(0, len(plaintext), 16):
-        block = encrypt_block(iv, key)
-        ciphertext += xor_bytes(bytes(plaintext[i:i + 16]), block)
-        iv = nonce + (i // 16 + 1).to_bytes(4, 'big')
-
-
 def _output_feedback(message: bytes, key: bytes, iv: bytes) -> bytes:
     result = b''
     for i in range(0, len(message), 16):
@@ -115,6 +103,7 @@ def _output_feedback(message: bytes, key: bytes, iv: bytes) -> bytes:
 
 def _counter(message: bytes, key: bytes, nonce: bytes) -> bytes:
     iv = nonce + bytes(4)  # 4 bytes = 32 bits counter + 12 bytes nonce = 16 bytes
+    assert len(message) / 16 < 2 ** 32
     result = b''
     for i in range(0, len(message), 16):
         block = encrypt_block(iv, key)

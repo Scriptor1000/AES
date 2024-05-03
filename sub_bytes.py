@@ -1,4 +1,5 @@
 from polynom import Polynom
+from state import State
 
 
 def multiplicative_inverse(a: bytes) -> bytes:
@@ -56,12 +57,12 @@ inv_sBox = [
 ]
 
 
-def sub_bytes(state: bytes) -> bytes:
-    return bytes([sBox[i] for i in state])
+def sub_bytes(state: State) -> State:
+    return State(state.map_bytes(lambda byte: sBox[byte]))
 
 
-def inv_sub_bytes(state: bytes) -> bytes:
-    return bytes([inv_sBox[i] for i in state])
+def inv_sub_bytes(state: State) -> State:
+    return State(state.map_bytes(lambda byte: inv_sBox[byte]))
 
 
 def test_forward():

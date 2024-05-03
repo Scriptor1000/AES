@@ -1,22 +1,40 @@
 from polynom import Polynom
+from state import State
 
 
-def get_columns(state: bytes) -> list[list[bytes]]:
-    assert len(state) == 16
-    return [[bytes([state[i + j]]) for j in range(4)] for i in range(0, 16, 4)]
+def xor_bytes(a: bytes, b: bytes) -> bytes:
+    assert len(a) == len(b)
+    return bytes(x ^ y for x, y in zip(a, b))
 
 
-def mix_columns(state: bytes) -> bytes:
-    assert len(state) == 16
-    columns = get_columns(state)
-    matrix = [b'\x02', b'\x03' b'\x01', b'\x01']
-    res_columns = []
-    for c in range(4):
-        res_c = []
-        for i in range(4):
-            res_c.append(Polynom(columns[c][i]) * Polynom(matrix[(c + i) % 4]) % Polynom(b'\x01\x1b'))
-        res_columns.append(res_c)
-    return bytes([res_columns[j][i] for i in range(4) for j in range(4)])
+def multiply_with_polynom(byte: bytes, polynom: Polynom) -> bytes:
+    return bytes(Polynom(byte) * polynom % Polynom(b'\x01\x1b'))
 
 
-print(mix_columns(b'0123465789ABCDEF'))
+def multiply_with_matrix(columns: bytes, matrix: bytes) -> bytes:
+    matrix = [Polynom(bytes([b])) for b in matrix]
+    new_column = []
+    for _ in range(4):
+        temp = [multiply_with_polynom(bytes([columns[0]]), matrix[0]),
+                multiply_with_polynom(bytes([columns[1]]), matrix[1]),
+                multiply_with_polynom(bytes([columns[2]]), matrix[2]),
+                multiply_with_polynom(bytes([columns[3]]), matrix[3])]
+        new_column.append(xor_bytes(xor_bytes(xor_bytes(temp[0], temp[1]), temp[2]), temp[3]))
+        matrix = [matrix[-1]] + matrix[:-1]
+    return bytes().join(new_column)
+
+
+def mix_columns(state: State) -> State:
+    matrix = b'\x02\x03\x01\x01'
+    state.set_columns(state.map_columns(lambda column: multiply_with_matrix(column, matrix)))
+    return state
+
+
+def inv_mix_columns(state: State) -> State:
+    matrix = b'\x0e\x0b\x0d\x09'
+    state.set_columns(state.map_columns(lambda column: multiply_with_matrix(column, matrix)))
+    return state
+
+
+print(State(b'0123465789ABCDEF'))
+print(inv_mix_columns(mix_columns(State(b'0123465789ABCDEF'))))
