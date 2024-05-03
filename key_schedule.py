@@ -20,7 +20,7 @@ class KeySchedule:
         elif self.key_words > 6 and item % self.key_words == 4:
             temp = _sub_word(temp)
         self.expanded.append(self[item - self.key_words] ^ temp)
-        return self.expanded[item].value
+        return self.expanded[item]
 
     def __str__(self):
         return ' - '.join([str(word) for word in self.expanded])
@@ -48,4 +48,8 @@ def _sub_word(word: _Word) -> _Word:
 
 
 if __name__ == '__main__':
-    print(KeySchedule(b'0123456789ABCDEFFEDCBA9876543210')[10])
+    key = (b'\x60\x3d\xeb\x10\x15\xca\x71\xbe\x2b\x73\xae\xf0\x85\x7d\x77\x81\x1f\x35\x2c\x07\x3b\x61\x08\xd7\x2d\x98'
+           b'\x10\xa3\x09\x14\xdf\xf4')
+    schedule = KeySchedule(key)
+    for i in range(60):
+        print(i, schedule[i])

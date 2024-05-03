@@ -4,6 +4,7 @@ from state import State
 
 
 def _multiply_with_polynom(byte: bytes, polynom: Polynom) -> bytes:
+    if byte == b'\x00': return byte
     return bytes(Polynom(byte) * polynom % Polynom(b'\x01\x1b'))
 
 
