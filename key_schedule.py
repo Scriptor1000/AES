@@ -1,4 +1,4 @@
-from helpers import sBox, _xor_bytes, Rcon
+from helpers import sBox, xor_bytes, Rcon
 
 
 class KeySchedule:
@@ -33,7 +33,7 @@ class _Word:
 
     def __xor__(self, other):
         assert isinstance(other, _Word)
-        return _Word(_xor_bytes(self.value, other.value))
+        return _Word(xor_bytes(self.value, other.value))
 
     def __str__(self):
         return ' '.join([hex(i)[2:] for i in self.value])

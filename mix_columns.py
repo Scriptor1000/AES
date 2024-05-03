@@ -1,4 +1,4 @@
-from helpers import _xor_bytes
+from helpers import xor_bytes
 from polynom import Polynom
 from state import State
 
@@ -16,7 +16,7 @@ def _multiply_with_matrix(columns: bytes, matrix: bytes) -> bytes:
                 _multiply_with_polynom(bytes([columns[1]]), matrix[1]),
                 _multiply_with_polynom(bytes([columns[2]]), matrix[2]),
                 _multiply_with_polynom(bytes([columns[3]]), matrix[3])]
-        new_column.append(_xor_bytes(_xor_bytes(_xor_bytes(temp[0], temp[1]), temp[2]), temp[3]))
+        new_column.append(xor_bytes(xor_bytes(xor_bytes(temp[0], temp[1]), temp[2]), temp[3]))
         matrix = [matrix[-1]] + matrix[:-1]
     return bytes().join(new_column)
 

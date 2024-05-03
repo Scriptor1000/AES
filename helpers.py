@@ -1,6 +1,16 @@
-def _xor_bytes(a: bytes, b: bytes) -> bytes:
+def xor_bytes(a: bytes, b: bytes) -> bytes:
     assert len(a) == len(b)
     return bytes(x ^ y for x, y in zip(a, b))
+
+
+def add_padding(plaintext: bytes, block_size: int) -> bytes:
+    padding_size = block_size - len(plaintext) % block_size
+    return plaintext + bytes([255] + [0] * (padding_size - 1))
+
+
+def remove_padding(padded: bytes) -> bytes:
+    padding_size = padded[::-1].index(b'\xff') + 1
+    return padded[:-padding_size]
 
 
 sBox = [
