@@ -1,6 +1,7 @@
 import secrets
 from block_cipher_modes import cipher_block_chaining_encrypt, cipher_feedback_encrypt, output_feedback_encrypt, \
-    counter_encrypt, counter_decrypt, output_feedback_decrypt, cipher_feedback_decrypt, cipher_block_chaining_decrypt
+    counter_encrypt, counter_decrypt, output_feedback_decrypt, cipher_feedback_decrypt, cipher_block_chaining_decrypt, \
+    IV_LENGTH
 
 
 class AESModes:
@@ -10,7 +11,7 @@ class AESModes:
     CTR = 4
 
 
-def encrypt(plaintext: bytes, key: bytes, mode: int, iv: bytes = None) -> bytes:
+def encrypt(plaintext: bytes, key: bytes, iv: bytes, mode: int) -> bytes:
     match mode:
         case AESModes.CBC:
             return cipher_block_chaining_encrypt(plaintext, key, iv)
@@ -24,7 +25,7 @@ def encrypt(plaintext: bytes, key: bytes, mode: int, iv: bytes = None) -> bytes:
             raise ValueError("Invalid mode")
 
 
-def decrypt(ciphertext: bytes, key: bytes, mode: int, iv: bytes = None) -> bytes:
+def decrypt(ciphertext: bytes, key: bytes, iv: bytes, mode: int) -> bytes:
     match mode:
         case AESModes.CBC:
             return cipher_block_chaining_decrypt(ciphertext, key, iv)
@@ -39,4 +40,4 @@ def decrypt(ciphertext: bytes, key: bytes, mode: int, iv: bytes = None) -> bytes
 
 
 def generate_iv() -> bytes:
-    return secrets.token_bytes(16)
+    return secrets.token_bytes(IV_LENGTH)

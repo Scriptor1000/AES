@@ -45,11 +45,3 @@ def _rot_word(word: _Word) -> _Word:
 
 def _sub_word(word: _Word) -> _Word:
     return _Word(bytes([sBox[a] for a in word.value]))
-
-
-if __name__ == '__main__':
-    key = (b'\x60\x3d\xeb\x10\x15\xca\x71\xbe\x2b\x73\xae\xf0\x85\x7d\x77\x81\x1f\x35\x2c\x07\x3b\x61\x08\xd7\x2d\x98'
-           b'\x10\xa3\x09\x14\xdf\xf4')
-    schedule = KeySchedule(key)
-    for i in range(60):
-        print(i, schedule[i])
