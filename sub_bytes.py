@@ -19,15 +19,15 @@ def _affine_transformation(a: bytes) -> bytes:
     return bytes([int(new[::-1], 2)])
 
 
+def _test_forward():
+    for i in range(256):
+        b = bytes([i])
+        assert bytes([sBox[i]]) == _affine_transformation(_multiplicative_inverse(b))
+
+
 def sub_bytes(state: State) -> State:
     return State(state.map_bytes(lambda byte: sBox[byte]))
 
 
 def inv_sub_bytes(state: State) -> State:
     return State(state.map_bytes(lambda byte: inv_sBox[byte]))
-
-
-def _test_forward():
-    for i in range(256):
-        b = bytes([i])
-        assert bytes([sBox[i]]) == _affine_transformation(_multiplicative_inverse(b))

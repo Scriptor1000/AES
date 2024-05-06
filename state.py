@@ -27,9 +27,3 @@ class State:
 
     def __str__(self):
         return '\n'.join([f'{' '.join([hex(i)[2:] for i in row])}' for row in self.get_rows()])
-
-
-if __name__ == '__main__':
-    s = State(b'0123465789ABCDEF')
-    print(s)
-    print(s.map_rows(lambda row: row))

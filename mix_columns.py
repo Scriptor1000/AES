@@ -31,8 +31,3 @@ def inv_mix_columns(state: State) -> State:
     matrix = b'\x0e\x0b\x0d\x09'
     state.set_columns(state.map_columns(lambda column: _multiply_with_matrix(column, matrix)))
     return state
-
-
-if __name__ == '__main__':
-    print(State(b'0123465789ABCDEF'))
-    print(inv_mix_columns(mix_columns(State(b'0123465789ABCDEF'))))
