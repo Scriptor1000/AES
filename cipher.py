@@ -6,24 +6,24 @@ from state import State
 from sub_bytes import sub_bytes, inv_sub_bytes
 
 
-def cipher(block: bytes, round_count: int, key_schedule: KeySchedule) -> bytes:
+def cipher(block: bytes, key_schedule: KeySchedule) -> bytes:
     state = State(block)
     state = add_round_key(state, key_schedule, 0)
-    for i in range(1, round_count):
+    for i in range(1, key_schedule.round_count):
         state = sub_bytes(state)
         state = shift_rows(state)
         state = mix_columns(state)
         state = add_round_key(state, key_schedule, i)
     state = sub_bytes(state)
     state = shift_rows(state)
-    state = add_round_key(state, key_schedule, round_count)
+    state = add_round_key(state, key_schedule, key_schedule.round_count)
     return state.value
 
 
-def inv_cipher(block: bytes, round_count: int, key_schedule: KeySchedule) -> bytes:
+def inv_cipher(block: bytes, key_schedule: KeySchedule) -> bytes:
     state = State(block)
-    state = add_round_key(state, key_schedule, round_count)
-    for i in range(round_count - 1, 0, -1):
+    state = add_round_key(state, key_schedule, key_schedule.round_count)
+    for i in range(key_schedule.round_count - 1, 0, -1):
         state = inv_shift_rows(state)
         state = inv_sub_bytes(state)
         state = add_round_key(state, key_schedule, i)
